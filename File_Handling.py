@@ -21,7 +21,7 @@ def check_first_time():
         file.close()
 
     if old_id == str(uid_value):
-        print("Same PC")
+        return True
     else:
         print("New PC")
         with open('Baseline/uuid.txt', 'w') as f:
@@ -33,6 +33,8 @@ def check_first_time():
             print(f)
             if f != 'uuid.txt':
                 os.remove("Baseline/" + f)
+        return False
+
 
 check_first_time()
 
