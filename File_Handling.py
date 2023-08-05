@@ -20,22 +20,19 @@ def check_first_time():
         old_id = file.read()
         file.close()
 
-    print(old_id)
-    print(uid_value)
-
-    if old_id == uid_value:
+    if old_id == str(uid_value):
         print("Same PC")
-    elif old_id != uid_value:
+    else:
         print("New PC")
         with open('Baseline/uuid.txt', 'w') as f:
             f.write(str(uid_value))
             f.close()
-        '''files = os.listdir('Baseline/')
+        files = os.listdir('Baseline/')
 
         for f in files:
             print(f)
             if f != 'uuid.txt':
-                os.remove(f)
-        '''
+                os.remove("Baseline/" + f)
+
 check_first_time()
 
