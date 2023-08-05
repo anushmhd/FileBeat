@@ -1,5 +1,7 @@
 import File_Handling
 import colors
+import os
+import time
 
 
 def display_banner() -> None:
@@ -15,11 +17,22 @@ def display_banner() -> None:
     print(banner)
 
 
+def animate_progress(text, total_frames=30, interval=0.1):
+    for frame in range(total_frames):
+        progress = "#" * frame + "-" * (total_frames - frame)
+        print(f"\r{text} [{progress}] {frame + 1}/{total_frames}", end="", flush=True)
+        time.sleep(interval)
+
+
+def clrscr():
+    os.system("cls")
+
+
 def get_drives_input(drives):
     while True:
         drives_input = input(f"\nEnter 'all' drives or one or more available drives ({', '.join(drives)}), "
                              f" all separated by"
-                             f"commas: ")
+                             f" commas: ")
         drives_input = drives_input.split(',')
 
         if not drives_input:
@@ -53,4 +66,13 @@ colors.print_green("Which drives do you want to monitor???")
 windows_drives = File_Handling.fetch_drive_names()
 print("Available Windows drive partitions:", ", ".join(windows_drives))
 input_drives = get_drives_input(windows_drives)
-print(input_drives)
+print("You have selected the drives", ", ".join(input_drives))
+
+clrscr()
+#animate_progress("Doing Basic checks...")
+pc_check = File_Handling.basic_check()
+
+if pc_check:
+    File_Handling.check_baseline(input_drives)
+else:
+    File_Handling.generate_baseline()
