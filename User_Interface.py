@@ -16,7 +16,6 @@ def display_banner() -> None:
 
 
 def get_drives_input(drives):
-
     while True:
         drives_input = input(f"\nEnter 'all' drives or one or more available drives ({', '.join(drives)}), "
                              f" all separated by"
