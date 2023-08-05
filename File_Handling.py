@@ -35,31 +35,30 @@ def basic_check() -> bool:
 
 
 def is_file_non_empty(filepath):
-    print(filepath)
     last_mod_stamp = ''
     if os.path.exists(filepath):
-        print("file exists")
         if os.path.getsize(filepath) > 0:
             last_mod_time = os.path.getmtime(filepath)
             last_mod_stamp = datetime.datetime.fromtimestamp(last_mod_time)
             return last_mod_stamp, True
         else:
-            print("File is empty")
             return last_mod_stamp, False
     else:
-        print("File  doesn't exist")
         return last_mod_stamp, False
 
 
 def check_baseline(chosen_drives):
-    print("\n")
+    global time_val, times
     check = True
     for i in range(len(chosen_drives)):
-        time_val, val = is_file_non_empty("Baseline/" + str(chosen_drives[i]) + ".txt")
+        times = []
+        time_val, val = is_file_non_empty("Baseline/" + str(chosen_drives[i]) + " baselines.txt")
+        times.append(time_val)
         check = check and val
-        print(val)
 
     if check is True:
-        print("\nBaseline exists for the time stamp", time_val)
+        baseline_check = "Baseline exists for the time stamp " + str(max(times))
+        return True, baseline_check
     else:
-        print("\nBaseline doesn't exist")
+        baseline_check = "Baseline line doesn't exist... Generating New Baseline "
+        return False, baseline_check

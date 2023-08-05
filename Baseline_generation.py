@@ -1,24 +1,6 @@
-import hashlib
-import multiprocessing
 import os
-
-
-def hash_file_chunk(chunk):
-    return hashlib.blake2b(chunk).hexdigest()
-
-
-def calculate_blake2b_hash(file_path):
-    chunk_size = 655366
-
-    with open(file_path, 'rb') as file:
-        with multiprocessing.Pool() as pool:
-            hash_list = pool.map(hash_file_chunk, iter(lambda: file.read(chunk_size), b''))
-
-    combined_hash = hashlib.blake2b()
-    for hash_digest in hash_list:
-        combined_hash.update(hash_digest.encode('utf-8'))
-
-    return combined_hash.hexdigest()
+import Hashing
+import sys
 
 
 def list_files(path):
@@ -35,16 +17,25 @@ def list_files(path):
         for f in files:
             if not f.startswith('.'):
                 file_path = os.path.join(root, f)
-                all_files[file_path] = calculate_blake2b_hash(file_path)
+                all_files[file_path] = Hashing.calculate_hash(file_path)
     return all_files
 
 
+def main():
+    print("Baseline files doesn't exist...\nGenerating New baselines...")
+    path = sys.argv
+    path.pop(0)
+
+    for i in range(len(path)):
+        fpath = path[i]+ ':\\'
+        all_files_with_digests = list_files(fpath)
+
+        with open("Baseline\\" + str(fpath[0]) + ' baselines.txt', 'w') as file:
+            for file_path, digest in all_files_with_digests.items():
+                file.write(file_path + ': ' + digest + '\n')
+
+    print("New Baselines Generated")
+
+
 if __name__ == "__main__":
-    path = 'F:\\'
-    all_files_with_digests = list_files(path)
-
-    with open(str(path[0]) + ' baselines.txt', 'w') as file:
-        for file_path, digest in all_files_with_digests.items():
-            file.write(file_path + ': ' + digest + '\n')
-
-    print("File paths with their corresponding BLAKE2b hash digests are stored in 'files_with_digests.txt'.")
+    main()

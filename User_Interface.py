@@ -1,7 +1,16 @@
+import os
+import subprocess
+import time
+
 import File_Handling
 import colors
-import os
-import time
+
+
+def run_baseline(module_name, args=None):
+    if args is None:
+        args = []
+
+    subprocess.run(["python", "-m", module_name] + args)
 
 
 def display_banner() -> None:
@@ -51,7 +60,6 @@ def get_drives_input(drives):
                 selected_drives = []
                 break
             elif drives_input[i].upper() in drives:
-                print(drives_input[i])
                 selected_drives.append(drives_input[i].upper())
 
         if len(selected_drives) == 0:
@@ -65,14 +73,20 @@ colors.print_green("Which drives do you want to monitor???")
 
 windows_drives = File_Handling.fetch_drive_names()
 print("Available Windows drive partitions:", ", ".join(windows_drives))
-input_drives = get_drives_input(windows_drives)
+input_drives= get_drives_input(windows_drives)
+ip = input_drives
 print("You have selected the drives", ", ".join(input_drives))
 
 clrscr()
-#animate_progress("Doing Basic checks...")
+# animate_progress("Doing Basic checks...")
 pc_check = File_Handling.basic_check()
 
-if pc_check:
-    File_Handling.check_baseline(input_drives)
+if pc_check is True:
+    check, message = File_Handling.check_baseline(input_drives)
+    if check is False:
+        run_baseline("Baseline_generation", input_drives)
+    else:
+        print(message)
 else:
-    File_Handling.generate_baseline()
+    colors.print_blue("\nNew System\n")
+    run_baseline("Baseline_generation", input_drives)
