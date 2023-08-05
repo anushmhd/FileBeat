@@ -1,5 +1,5 @@
 import File_Handling
-import Colors
+import colors
 
 
 def display_banner() -> None:
@@ -24,7 +24,7 @@ def get_drives_input(drives):
         drives_input = drives_input.split(',')
 
         if not drives_input:
-            Colors.print_red("Invalid input, Please try again...")
+            colors.print_red("Invalid input, Please try again...")
             continue
 
         if drives_input[0].upper().strip() == "ALL":
@@ -35,7 +35,7 @@ def get_drives_input(drives):
 
         for i in range(len(drives_input)):
             if drives_input[i].upper() not in drives:
-                Colors.print_red("Invalid input, Please try again...")
+                colors.print_red("Invalid input, Please try again...")
                 selected_drives = []
                 break
             elif drives_input[i].upper() in drives:
@@ -49,7 +49,7 @@ def get_drives_input(drives):
 
 
 display_banner()
-Colors.print_green("Which drives do you want to monitor???")
+colors.print_green("Which drives do you want to monitor???")
 
 windows_drives = File_Handling.fetch_drive_names()
 print("Available Windows drive partitions:", ", ".join(windows_drives))
