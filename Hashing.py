@@ -1,6 +1,5 @@
 import hashlib
 import multiprocessing
-import os
 
 
 def hash_file_chunk(chunk):
