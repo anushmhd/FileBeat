@@ -2,9 +2,9 @@ from plyer import notification
 
 def display_notification(message):
     notification.notify(
-        title="POPUP Notification",
+        title="Integrity Alert",
         message=message,
-        app_name="APP NOTIFICATION",
+        app_name="FileBeat",
         timeout=10
     )
 

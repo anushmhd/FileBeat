@@ -7,6 +7,7 @@ import User_Interface
 import colors
 import notification
 
+
 def read_baseline_files(baseline_path):
     data = {}
     with open(baseline_path, 'r') as f:
@@ -17,22 +18,16 @@ def read_baseline_files(baseline_path):
 
 
 def integrity_monitoring(file_path, baseline_list):
-
     while True:
         for baseline_data in baseline_list:
             for path, digest in baseline_data.items():
                 if not os.path.exists(path):
-<<<<<<< HEAD
-                    print(f"ALERT: File at path '{path}' has been deleted or moved")
-=======
-                    msg = "ALERT: File at path "+ path  +" has been deleted or moved"
+                    msg = "ALERT: File at path " + path + " has been deleted or moved"
                     notification.display_notification(msg)
->>>>>>> 789f8c8c81e3bff63445de13db6bfecbff5b2393
-
                 else:
                     current_hash = Hashing.calculate_hash(path)
                     if current_hash != digest:
-                        msg = "ALERT: File at path "+ path  +" has been deleted or moved"
+                        msg = "ALERT: File at path " + path + " has been modified"
                         notification.display_notification(msg)
         time.sleep(60)
 
