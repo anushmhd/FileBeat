@@ -8,6 +8,4 @@ def display_notification(message):
         timeout=10
     )
 
-if __name__ == "__main__":
-    user_input = input("Enter a sentence: ")
-    display_notification(user_input)
+

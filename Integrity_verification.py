@@ -5,6 +5,7 @@ import Hashing
 import sys
 import User_Interface
 import colors
+import notification
 
 def read_baseline_files(baseline_path):
     data = {}
@@ -21,11 +22,14 @@ def integrity_monitoring(file_path, baseline_list):
         for baseline_data in baseline_list:
             for path, digest in baseline_data.items():
                 if not os.path.exists(path):
-                    print(f"ALERT: File at path '{path}' has been deleted or moved")
+                    msg = "ALERT: File at path "+ path  +" has been deleted or moved"
+                    notification.display_notification(msg)
+
                 else:
                     current_hash = Hashing.calculate_hash(path)
                     if current_hash != digest:
-                        print(f"ALERT: File at path '{path}' has been modified.")
+                        msg = "ALERT: File at path "+ path  +" has been deleted or moved"
+                        notification.display_notification(msg)
         time.sleep(60)
 
 
