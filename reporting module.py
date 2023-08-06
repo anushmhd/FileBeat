@@ -1,67 +1,52 @@
-import datetime
+import os
+import json
 
-class ReportingModule:
-    def __init__(self, database):
-        self.database = database
+def generate_report(verified_files, baseline_files):
+    """
+    Generates a detailed report about file integrity checks.
 
-    def generate_report(self, baseline, current_state):
-        report = "File Integrity Report\n"
-        report += "Date: {}\n\n".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    Args:
+        verified_files (dict): Dictionary containing verified file information.
+                               Keys are file paths, values are tuples of (hash, timestamp).
+        baseline_files (dict): Dictionary containing baseline file information.
+                               Keys are file paths, values are tuples of (hash, timestamp).
 
-        # Compare the baseline with the current state
-        changes, new_files = self.compare_files(baseline, current_state)
+    Returns:
+        str: The report as a formatted string.
+    """
+    report = []
+    report.append("File Integrity Report:")
+    report.append("=======================")
 
-        # Reporting changes
-        if changes:
-            report += "Changes Detected:\n"
-            for file_path in changes:
-                report += "- File: {}\n".format(file_path)
+    # Identify changes and new files
+    changed_files = {}
+    new_files = {}
+    for path, (hash_value, timestamp) in verified_files.items():
+        if path in baseline_files:
+            if hash_value != baseline_files[path][0]:
+                changed_files[path] = (baseline_files[path][0], hash_value)
         else:
-            report += "No changes detected.\n"
+            new_files[path] = (hash_value, timestamp)
 
-        # Reporting new files
-        if new_files:
-            report += "\nNew Files Detected:\n"
-            for file_path in new_files:
-                report += "- File: {}\n".format(file_path)
-        else:
-            report += "No new files detected.\n"
+    # Generate report content
+    if changed_files:
+        report.append("\nChanged Files:")
+        for path, (old_hash, new_hash) in changed_files.items():
+            report.append(f"File: {path}")
+            report.append(f"Old Hash: {old_hash}")
+            report.append(f"New Hash: {new_hash}")
+            report.append("------------------")
 
-        return report
+    if new_files:
+        report.append("\nNew Files:")
+        for path, (hash_value, timestamp) in new_files.items():
+            report.append(f"File: {path}")
+            report.append(f"Hash: {hash_value}")
+            report.append(f"Timestamp: {timestamp}")
+            report.append("------------------")
 
-    def compare_files(self, baseline, current_state):
-        baseline_files = set(baseline.keys())
-        current_files = set(current_state.keys())
+    # Generate final report string
+    report_str = "\n".join(report)
+    return report_str
 
-        # Find files that have been changed
-        changed_files = []
-        for file_path in baseline_files.intersection(current_files):
-            if baseline[file_path] != current_state[file_path]:
-                changed_files.append(file_path)
 
-        # Find new files
-        new_files = current_files - baseline_files
-
-        return changed_files, new_files
-
-# Example usage:
-if __name__ == "__main__":
-    # Assuming you have a database instance named 'database' containing baseline and current_state data
-    reporting_module = ReportingModule(database)
-
-    # Assuming you have the baseline and current_state as dictionaries of file paths and their corresponding hashes
-    baseline = {
-        "/path/to/file1.txt": "hash_of_file1",
-        "/path/to/file2.txt": "hash_of_file2",
-        # ...
-    }
-
-    current_state = {
-        "/path/to/file1.txt": "new_hash_of_file1",
-        "/path/to/file2.txt": "hash_of_file2",
-        "/path/to/new_file.txt": "hash_of_new_file",
-        # ...
-    }
-
-    report = reporting_module.generate_report(baseline, current_state)
-    print(report)
