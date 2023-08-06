@@ -8,6 +8,7 @@ The Application recursively traverse through all folders in the drive, till 2 de
 
 Usage: 
 pip install -r requirements.txt 
+
 python3 main.py
 
 The Application has the following modules:
