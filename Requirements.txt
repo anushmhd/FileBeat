@@ -1,0 +1,4 @@
+plyer
+reportlab
+ctypes
+uuid
