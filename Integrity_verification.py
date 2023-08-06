@@ -3,9 +3,16 @@ import time
 import multiprocessing
 import Hashing
 import sys
-import User_Interface
+import signal
+import Report
+import File_Handling
 import colors
 import notification
+
+
+def handle_keyboard_interrupt(signal_number, frame):
+    colors.print_yellow("\nKeyboard interrupt detected. Stopping monitoring processes...\nBye!")
+    sys.exit(0)
 
 
 def read_baseline_files(baseline_path):
@@ -18,22 +25,30 @@ def read_baseline_files(baseline_path):
 
 
 def integrity_monitoring(file_path, baseline_list):
+    changes = []
     while True:
         for baseline_data in baseline_list:
             for path, digest in baseline_data.items():
                 if not os.path.exists(path):
                     msg = "ALERT: File at path " + path + " has been deleted or moved"
                     notification.display_notification(msg)
+                    new_change = {"file": os.path.basename(path), "path": path, "change": "Deleted or Moved"}
+                    if new_change not in changes:
+                        changes.append(new_change)
                 else:
                     current_hash = Hashing.calculate_hash(path)
                     if current_hash != digest:
                         msg = "ALERT: File at path " + path + " has been modified"
                         notification.display_notification(msg)
-        time.sleep(60)
+                        new_change = {"file": os.path.basename(path), "path": path, "change": "Modified"}
+                        if new_change not in changes:
+                            changes.append(new_change)
+            Report.gen_report(changes, "FileBeat_Report.pdf")
+            time.sleep(60)
 
 
 def main():
-    User_Interface.clrscr()
+    File_Handling.clrscr()
     colors.print_red("Beginning monitoring of the drives\n")
     path = sys.argv
     path.pop(0)
@@ -53,4 +68,5 @@ def main():
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, handle_keyboard_interrupt)
     main()

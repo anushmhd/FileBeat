@@ -1,6 +1,9 @@
 import os
+import colors
+import File_Handling
 import Hashing
 import sys
+import signal
 
 
 def list_files(path):
@@ -22,12 +25,13 @@ def list_files(path):
 
 
 def main():
-    print("Baseline files doesn't exist...\nGenerating New baselines...")
+    File_Handling.clrscr()
+    colors.print_magenta("Generating New baselines...")
     path = sys.argv
     path.pop(0)
 
     for i in range(len(path)):
-        fpath = path[i]+ ':\\'
+        fpath = path[i] + ':\\'
         all_files_with_digests = list_files(fpath)
 
         with open("Baseline\\" + str(fpath[0]) + ' baselines.txt', 'w') as file:
@@ -38,4 +42,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # Use the default behavior for SIGINT
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        colors.print_yellow("\nKeyboard interrupt detected. Stopping baseline generation...\nBye!")
+        sys.exit(0)

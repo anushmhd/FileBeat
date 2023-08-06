@@ -5,8 +5,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from datetime import datetime
 
 
-def gen_report(changes):
-    pdf = SimpleDocTemplate("FileBeat_Report.pdf", pagesize=landscape(letter))
+def gen_report(changes, pdf_file):
+    pdf = SimpleDocTemplate(pdf_file, pagesize=landscape(letter))
     story = []
 
     styles = getSampleStyleSheet()
@@ -17,12 +17,12 @@ def gen_report(changes):
     story.append(title)
     story.append(Spacer(1, 10))
 
-    table_data = [["Serial No.", "File Name", "File Path", "Change Type", "Timestamp"]]
+    table_data = [["Serial No.","File Path", "Change Type", "Timestamp"]]
     for idx, change in enumerate(changes, start=1):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        table_data.append([idx, change["file"], change["path"], change["change"], timestamp])
+        table_data.append([idx, change["path"], change["change"], timestamp])
 
-    table = Table(table_data, colWidths=[50, 150, 150, 150, 150])
+    table = Table(table_data, colWidths=[50, 400, 150, 150])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lavender),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),

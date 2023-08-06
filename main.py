@@ -1,7 +1,6 @@
-import os
 import subprocess
 import time
-
+import sys
 import File_Handling
 import colors
 
@@ -33,15 +32,20 @@ def display_banner() -> None:
     print(banner)
 
 
-def animate_progress(text, total_frames=30, interval=0.1):
+def animate_progress(text, total_frames=10, interval=0.1):
     for frame in range(total_frames):
         progress = "#" * frame + "-" * (total_frames - frame)
         print(f"\r{text} [{progress}] {frame + 1}/{total_frames}", end="", flush=True)
         time.sleep(interval)
 
 
-def clrscr():
-    os.system("cls")
+def get_response():
+    while True:
+        user_input = str(input().strip().upper())
+        if user_input == 'Y' or user_input == 'N':
+            return user_input
+        else:
+            print("Invalid input. Please enter 'Y' or 'N'.")
 
 
 def get_drives_input(drives):
@@ -76,27 +80,38 @@ def get_drives_input(drives):
 
 
 if __name__ == "__main__":
-    display_banner()
-    colors.print_green("Which drives do you want to monitor???")
+    if __name__ == "__main__":
+        try:
+            display_banner()
+            colors.print_green("Which drives do you want to monitor???")
 
-    windows_drives = File_Handling.fetch_drive_names()
-    print("Available Windows drive partitions:", ", ".join(windows_drives))
-    input_drives = get_drives_input(windows_drives)
-    print("You have selected the drives", ", ".join(input_drives))
+            windows_drives = File_Handling.fetch_drive_names()
+            print("Available Windows drive partitions:", ", ".join(windows_drives))
+            input_drives = get_drives_input(windows_drives)
+            print("You have selected the drives", ", ".join(input_drives))
 
-    clrscr()
-    # animate_progress("Doing Basic checks...")
-    pc_check = File_Handling.basic_check()
+            File_Handling.clrscr()
+            animate_progress("Doing Basic checks...")
+            pc_check = File_Handling.basic_check()
 
-    if pc_check is True:
-        check, message = File_Handling.check_baseline(input_drives)
-        if check is False:
-            run_baseline("Baseline_generation", input_drives)
-            run_monitoring("Integrity_verification",input_drives)
-        else:
-            print(message)
-            run_monitoring("Integrity_verification", input_drives)
-    else:
-        colors.print_blue("\nNew System\n")
-        run_baseline("Baseline_generation", input_drives)
-        run_monitoring("Integrity_verification", input_drives)
+            if pc_check is True:
+                check, message = File_Handling.check_baseline(input_drives)
+                if check is False:
+                    run_baseline("Baseline_generation", input_drives)
+                    run_monitoring("Integrity_verification", input_drives)
+                else:
+                    print(message)
+                    colors.print_green("\nDo you want to generate a new baseline??\nPress [Y] or [N]")
+                    response = get_response()
+                    if response == 'Y':
+                        run_baseline("Baseline_generation", input_drives)
+                    run_monitoring("Integrity_verification", input_drives)
+            else:
+                colors.print_blue("\nNew System\n")
+                run_baseline("Baseline_generation", input_drives)
+                run_monitoring("Integrity_verification", input_drives)
+
+        except KeyboardInterrupt:
+            colors.print_yellow("\nExitting...\nBye!")
+            # Additional cleanup or exit logic can be added here if needed
+            sys.exit(0)

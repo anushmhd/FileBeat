@@ -3,6 +3,7 @@ import uuid
 import os
 import datetime
 
+
 def fetch_drive_names():
     drives = []
     bitmask = ctypes.windll.kernel32.GetLogicalDrives()  # detects the disk partitions
@@ -12,6 +13,10 @@ def fetch_drive_names():
             if drive_letter != 'C':  # Skipping C drive
                 drives.append(drive_letter)
     return drives
+
+
+def clrscr():
+    os.system("cls")
 
 
 def basic_check() -> bool:
@@ -57,8 +62,8 @@ def check_baseline(chosen_drives):
         check = check and val
 
     if check is True:
-        baseline_check = "Baseline exists for the time stamp " + str(max(times))
+        baseline_check = "\n\nBaseline exists for the time stamp " + str(max(times))
         return True, baseline_check
     else:
-        baseline_check = "Baseline line doesn't exist... Generating New Baseline "
+        baseline_check = "\n\nBaseline line doesn't exist... Generating New Baseline "
         return False, baseline_check
