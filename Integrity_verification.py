@@ -22,6 +22,7 @@ def integrity_monitoring(file_path, baseline_list):
             for path, digest in baseline_data.items():
                 if not os.path.exists(path):
                     print(f"ALERT: File at path '{path}' has been deleted or moved")
+
                 else:
                     current_hash = Hashing.calculate_hash(path)
                     if current_hash != digest:
