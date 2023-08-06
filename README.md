@@ -6,6 +6,9 @@ The Application uses blake2b hashing algorthim for integrity checking and hashin
 
 The Application recursively traverse through all folders in the drive, till 2 depts, Because going into filepath more than 2 depths make the application very slow as it is written on python.It automatically detects the system drives and leaves C Drive intentionally as its very much volatile with lot of cache and log files. 
 
+Usage: 
+pip install -r requirements.txt 
+python3 main.py
 
 The Application has the following modules:
 
