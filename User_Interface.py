@@ -13,6 +13,13 @@ def run_baseline(module_name, args=None):
     subprocess.run(["python", "-m", module_name] + args)
 
 
+def run_monitoring(module_name, args=None):
+    if args is None:
+        args = []
+
+    subprocess.run(["python", "-m", module_name] + args)
+
+
 def display_banner() -> None:
     """
     :rtype: None
@@ -68,25 +75,28 @@ def get_drives_input(drives):
             return selected_drives
 
 
-display_banner()
-colors.print_green("Which drives do you want to monitor???")
+if __name__ == "__main__":
+    display_banner()
+    colors.print_green("Which drives do you want to monitor???")
 
-windows_drives = File_Handling.fetch_drive_names()
-print("Available Windows drive partitions:", ", ".join(windows_drives))
-input_drives= get_drives_input(windows_drives)
-ip = input_drives
-print("You have selected the drives", ", ".join(input_drives))
+    windows_drives = File_Handling.fetch_drive_names()
+    print("Available Windows drive partitions:", ", ".join(windows_drives))
+    input_drives = get_drives_input(windows_drives)
+    print("You have selected the drives", ", ".join(input_drives))
 
-clrscr()
-# animate_progress("Doing Basic checks...")
-pc_check = File_Handling.basic_check()
+    clrscr()
+    # animate_progress("Doing Basic checks...")
+    pc_check = File_Handling.basic_check()
 
-if pc_check is True:
-    check, message = File_Handling.check_baseline(input_drives)
-    if check is False:
-        run_baseline("Baseline_generation", input_drives)
+    if pc_check is True:
+        check, message = File_Handling.check_baseline(input_drives)
+        if check is False:
+            run_baseline("Baseline_generation", input_drives)
+            run_monitoring("Integrity_verification",input_drives)
+        else:
+            print(message)
+            run_monitoring("Integrity_verification", input_drives)
     else:
-        print(message)
-else:
-    colors.print_blue("\nNew System\n")
-    run_baseline("Baseline_generation", input_drives)
+        colors.print_blue("\nNew System\n")
+        run_baseline("Baseline_generation", input_drives)
+        run_monitoring("Integrity_verification", input_drives)

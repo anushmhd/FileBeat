@@ -32,7 +32,7 @@ def main():
 
         with open("Baseline\\" + str(fpath[0]) + ' baselines.txt', 'w') as file:
             for file_path, digest in all_files_with_digests.items():
-                file.write(file_path + ': ' + digest + '\n')
+                file.write(file_path + '%' + digest + '\n')
 
     print("New Baselines Generated")
 
